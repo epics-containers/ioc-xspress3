@@ -71,5 +71,5 @@ fi
 
 # Launch the IOC ***************************************************************
 
-${IOC}/bin/linux-x86_64/ioc ${RUNTIME_DIR}/st.cmd
+"${IOC}/bin/${EPICS_HOST_ARCH}/ioc" "${RUNTIME_DIR}/st.cmd"
 

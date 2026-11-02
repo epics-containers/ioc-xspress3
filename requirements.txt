@@ -1,5 +1,7 @@
-ibek>=3.3.2
-# git+https://github.com/epics-containers/ibek.git@xpress3
+# pin versions of pvi or ibek if needed
+pvi
+# ibek-support (resolute) requires ibek >= 4.8.2
+ibek>=4.8.2,<5
 # to install direct from github during development in a branch
 # git+https://github.com/epics-containers/ibek.git@fix-extract-assets
-stdio-socket>=1.2.0
+stdio-socket>=1.4.0
