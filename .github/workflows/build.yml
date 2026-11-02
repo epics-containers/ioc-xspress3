@@ -5,7 +5,8 @@ on:
   pull_request:
 
 env:
-  # image names, -developer or -runtime is appended to these
+  # image names, -developer or -runtime is appended to these. Registries need
+  # lower case, so shell steps use ${NAME,,}
   NAME: ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }}
 
 jobs:
@@ -120,7 +121,7 @@ jobs:
           for target in developer runtime; do
             docker buildx build . --platform ${PLATFORM} --target ${target} \
               --build-arg IOC_VERSION=${IOC_VERSION} \
-              --output type=image,name=${NAME}-${target},push-by-digest=true,name-canonical=true,push=true \
+              --output type=image,name=${NAME,,}-${target},push-by-digest=true,name-canonical=true,push=true \
               --metadata-file /tmp/${target}.json
             digest=$(jq -r '."containerimage.digest"' /tmp/${target}.json)
             mkdir -p /tmp/digests/${target}
@@ -168,14 +169,24 @@ jobs:
       - name: Create manifest list and push
         working-directory: /tmp/digests/${{ matrix.target }}
         run: |
-          image=${NAME}-${{ matrix.target }}
+          image=${NAME,,}-${{ matrix.target }}
           docker buildx imagetools create -t ${image}:${{ github.ref_name }} \
             $(printf "${image}@sha256:%s " *)
           docker buildx imagetools inspect ${image}:${{ github.ref_name }}
 
+  lowername:
+    # container.image cannot call shell, so lower case the name here for it
+    if: ${{ github.event_name == 'push' && github.ref_type == 'tag' }}
+    runs-on: ubuntu-latest
+    outputs:
+      image: ${{ steps.lower.outputs.image }}
+    steps:
+      - id: lower
+        run: echo "image=${NAME,,}-developer" >> $GITHUB_OUTPUT
+
   release:
     # Release on tag push - publish ioc schema
-    needs: [merge]
+    needs: [merge, lowername]
     if: ${{ github.event_name == 'push' && github.ref_type == 'tag' }}
     runs-on: ubuntu-latest
     permissions:
@@ -184,7 +195,7 @@ jobs:
 
     # this job runs in the native developer container we just made
     container:
-      image: ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }}-developer:${{ github.ref_name }}
+      image: ${{ needs.lowername.outputs.image }}:${{ github.ref_name }}
 
     steps:
       - name: generate-schema

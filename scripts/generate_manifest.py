@@ -49,7 +49,7 @@ def get_epics_modules(root: pathlib.Path) -> dict:
             continue
 
         name = data.get("module") or filepath.stem.replace(".install", "")
-        version = data.get("version", "unknown")
+        version = str(data.get("version", "unknown"))
         organization = data.get("organization", DEFAULT_ORGANIZATION)
         git_repo = data.get("git_repo") or f"{organization.rstrip('/')}/{name}"
 

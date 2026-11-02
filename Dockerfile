@@ -1,6 +1,6 @@
 ARG REGISTRY=ghcr.io/epics-containers
-ARG RUNTIME=${REGISTRY}/epics-base-runtime:7.0.10ec4-beta.2
-ARG DEVELOPER=${REGISTRY}/epics-base-developer:7.0.10ec4-beta.2
+ARG RUNTIME=${REGISTRY}/epics-base-runtime:7.0.10ec6
+ARG DEVELOPER=${REGISTRY}/epics-base-developer:7.0.10ec6
 
 ##### build stage ##############################################################
 FROM  ${DEVELOPER} AS developer
@@ -11,7 +11,7 @@ ENV SOURCE_FOLDER=/epics/generic-source
 # connect ioc source folder to its know location
 RUN ln -s ${SOURCE_FOLDER}/ioc ${IOC}
 
-# Get the current version of ibek
+# get the current versions of pvi and ibek
 COPY requirements.txt requirements.txt
 RUN uv pip install --upgrade -r requirements.txt
 

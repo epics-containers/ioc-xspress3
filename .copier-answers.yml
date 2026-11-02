@@ -1,9 +1,9 @@
 # Changes here will be overwritten by Copier; NEVER EDIT MANUALLY
-_commit: 4.5.0
+_commit: 5.0.0
 _src_path: https://github.com/epics-containers/ioc-template
+arm64: true
 description: A generic ioc for the Xspress3 support module
 git_platform: github.com
 github_org: M-Chan
 name: ioc-xspress3
 repo_uri: git@github.com:M-Chan/ioc-xspress3.git
-rtems: false
